@@ -1,0 +1,183 @@
+{
+	"textures": [
+		{
+			"image": "phone-0.png",
+			"size": {
+				"w": 238,
+				"h": 250
+			},
+			"sprites": [
+				{
+					"filename": "phone.png0006.png",
+					"region": {
+						"x": 1,
+						"y": 1,
+						"w": 130,
+						"h": 77
+					},
+					"margin": {
+						"x": 1100,
+						"y": 489,
+						"w": 1790,
+						"h": 1003
+					}
+				},
+				{
+					"filename": "phone.png0001.png",
+					"region": {
+						"x": 133,
+						"y": 1,
+						"w": 104,
+						"h": 75
+					},
+					"margin": {
+						"x": 1118,
+						"y": 498,
+						"w": 1816,
+						"h": 1005
+					}
+				},
+				{
+					"filename": "phone.png0007.png",
+					"region": {
+						"x": 133,
+						"y": 1,
+						"w": 104,
+						"h": 75
+					},
+					"margin": {
+						"x": 1118,
+						"y": 498,
+						"w": 1816,
+						"h": 1005
+					}
+				},
+				{
+					"filename": "phone.png0008.png",
+					"region": {
+						"x": 133,
+						"y": 1,
+						"w": 104,
+						"h": 75
+					},
+					"margin": {
+						"x": 1118,
+						"y": 498,
+						"w": 1816,
+						"h": 1005
+					}
+				},
+				{
+					"filename": "phone.png0004.png",
+					"region": {
+						"x": 1,
+						"y": 80,
+						"w": 114,
+						"h": 103
+					},
+					"margin": {
+						"x": 1111,
+						"y": 469,
+						"w": 1806,
+						"h": 977
+					}
+				},
+				{
+					"filename": "phone.png0011.png",
+					"region": {
+						"x": 1,
+						"y": 80,
+						"w": 114,
+						"h": 103
+					},
+					"margin": {
+						"x": 1111,
+						"y": 469,
+						"w": 1806,
+						"h": 977
+					}
+				},
+				{
+					"filename": "phone.png0005.png",
+					"region": {
+						"x": 1,
+						"y": 185,
+						"w": 117,
+						"h": 64
+					},
+					"margin": {
+						"x": 1105,
+						"y": 494,
+						"w": 1803,
+						"h": 1016
+					}
+				},
+				{
+					"filename": "phone.png0003.png",
+					"region": {
+						"x": 117,
+						"y": 80,
+						"w": 119,
+						"h": 86
+					},
+					"margin": {
+						"x": 1103,
+						"y": 482,
+						"w": 1801,
+						"h": 994
+					}
+				},
+				{
+					"filename": "phone.png0010.png",
+					"region": {
+						"x": 117,
+						"y": 80,
+						"w": 119,
+						"h": 86
+					},
+					"margin": {
+						"x": 1103,
+						"y": 482,
+						"w": 1801,
+						"h": 994
+					}
+				},
+				{
+					"filename": "phone.png0002.png",
+					"region": {
+						"x": 120,
+						"y": 168,
+						"w": 111,
+						"h": 74
+					},
+					"margin": {
+						"x": 1107,
+						"y": 475,
+						"w": 1809,
+						"h": 1006
+					}
+				},
+				{
+					"filename": "phone.png0009.png",
+					"region": {
+						"x": 120,
+						"y": 168,
+						"w": 111,
+						"h": 74
+					},
+					"margin": {
+						"x": 1107,
+						"y": 475,
+						"w": 1809,
+						"h": 1006
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b6cede871fc554aaad5a67079ebc9027:db3cd3603cf3401eadbc7ecd6f8e6cff:be8bc28c1050bfc168da3aa3fe5eb98f$"
+	}
+}

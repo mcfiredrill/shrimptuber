@@ -1,0 +1,288 @@
+{
+	"textures": [
+		{
+			"image": "shrimpy-0.png",
+			"size": {
+				"w": 1910,
+				"h": 1802
+			},
+			"sprites": [
+				{
+					"filename": "shrimp_journalist.png0018.png",
+					"region": {
+						"x": 1,
+						"y": 1,
+						"w": 286,
+						"h": 602
+					},
+					"margin": {
+						"x": 1026,
+						"y": 12,
+						"w": 1634,
+						"h": 478
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0017.png",
+					"region": {
+						"x": 1,
+						"y": 605,
+						"w": 287,
+						"h": 601
+					},
+					"margin": {
+						"x": 1026,
+						"y": 16,
+						"w": 1633,
+						"h": 479
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0009.png",
+					"region": {
+						"x": 1,
+						"y": 1208,
+						"w": 313,
+						"h": 593
+					},
+					"margin": {
+						"x": 1023,
+						"y": 72,
+						"w": 1607,
+						"h": 487
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0016.png",
+					"region": {
+						"x": 289,
+						"y": 1,
+						"w": 290,
+						"h": 600
+					},
+					"margin": {
+						"x": 1025,
+						"y": 21,
+						"w": 1630,
+						"h": 480
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0014.png",
+					"region": {
+						"x": 290,
+						"y": 603,
+						"w": 296,
+						"h": 599
+					},
+					"margin": {
+						"x": 1025,
+						"y": 33,
+						"w": 1624,
+						"h": 481
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0013.png",
+					"region": {
+						"x": 316,
+						"y": 1204,
+						"w": 298,
+						"h": 597
+					},
+					"margin": {
+						"x": 1025,
+						"y": 41,
+						"w": 1622,
+						"h": 483
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0015.png",
+					"region": {
+						"x": 581,
+						"y": 1,
+						"w": 293,
+						"h": 599
+					},
+					"margin": {
+						"x": 1025,
+						"y": 27,
+						"w": 1627,
+						"h": 481
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0012.png",
+					"region": {
+						"x": 588,
+						"y": 602,
+						"w": 303,
+						"h": 596
+					},
+					"margin": {
+						"x": 1024,
+						"y": 48,
+						"w": 1617,
+						"h": 484
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0011.png",
+					"region": {
+						"x": 876,
+						"y": 1,
+						"w": 306,
+						"h": 595
+					},
+					"margin": {
+						"x": 1024,
+						"y": 56,
+						"w": 1614,
+						"h": 485
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0010.png",
+					"region": {
+						"x": 616,
+						"y": 1200,
+						"w": 309,
+						"h": 594
+					},
+					"margin": {
+						"x": 1024,
+						"y": 64,
+						"w": 1611,
+						"h": 486
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0008.png",
+					"region": {
+						"x": 893,
+						"y": 598,
+						"w": 316,
+						"h": 591
+					},
+					"margin": {
+						"x": 1023,
+						"y": 80,
+						"w": 1604,
+						"h": 489
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0007.png",
+					"region": {
+						"x": 1184,
+						"y": 1,
+						"w": 319,
+						"h": 590
+					},
+					"margin": {
+						"x": 1023,
+						"y": 87,
+						"w": 1601,
+						"h": 490
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0006.png",
+					"region": {
+						"x": 927,
+						"y": 1191,
+						"w": 322,
+						"h": 589
+					},
+					"margin": {
+						"x": 1023,
+						"y": 94,
+						"w": 1598,
+						"h": 491
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0004.png",
+					"region": {
+						"x": 1211,
+						"y": 593,
+						"w": 326,
+						"h": 588
+					},
+					"margin": {
+						"x": 1023,
+						"y": 104,
+						"w": 1594,
+						"h": 492
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0005.png",
+					"region": {
+						"x": 1505,
+						"y": 1,
+						"w": 324,
+						"h": 588
+					},
+					"margin": {
+						"x": 1023,
+						"y": 100,
+						"w": 1596,
+						"h": 492
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0001.png",
+					"region": {
+						"x": 1251,
+						"y": 1183,
+						"w": 329,
+						"h": 587
+					},
+					"margin": {
+						"x": 1023,
+						"y": 111,
+						"w": 1591,
+						"h": 493
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0002.png",
+					"region": {
+						"x": 1539,
+						"y": 591,
+						"w": 328,
+						"h": 587
+					},
+					"margin": {
+						"x": 1023,
+						"y": 110,
+						"w": 1592,
+						"h": 493
+					}
+				},
+				{
+					"filename": "shrimp_journalist.png0003.png",
+					"region": {
+						"x": 1582,
+						"y": 1180,
+						"w": 327,
+						"h": 587
+					},
+					"margin": {
+						"x": 1023,
+						"y": 108,
+						"w": 1593,
+						"h": 493
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:17f5e96f9ba590f40db62a52073e3023:db1b389c662c7dc00b3ee7c3cfd08359:b0f7cd6c2821df713ec2575b655a3ff8$"
+	}
+}
