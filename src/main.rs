@@ -98,6 +98,7 @@ fn render(
     texture: &Texture,
     shrimp: &Shrimp,
     computer_texture: &Texture,
+    scale_factor: f32,
 ) -> Result<(), String> {
     canvas.set_draw_color(color);
     canvas.clear();
@@ -111,13 +112,16 @@ fn render(
         frame_width,
         frame_height,
         );
+
+    let scaled_width = (frame_width as f32 * scale_factor) as u32;
+    let scaled_height = (frame_height as f32 * scale_factor) as u32;
     //println!("current_frame rect: {:?}", current_frame);
 
     //canvas.copy(texture, None, None)?;
     //canvas.copy(texture, Rect::new(0, 0, 286, 602), Rect::new(0, 0, 286, 602))?;
         // Treat the center of the screen as the (0, 0) coordinate
     let screen_position = shrimp.position + Point::new(width as i32 / 2, height as i32 / 2);
-    let screen_rect = Rect::from_center(screen_position, frame_width, frame_height);
+    let screen_rect = Rect::from_center(screen_position, scaled_width, scaled_height);
     canvas.copy(texture, current_frame, screen_rect)?;
     canvas.copy(computer_texture, Rect::new(0, 0, 1920, 1080), Rect::new(-200, 200, 1920, 1080))?;
 
@@ -207,6 +211,8 @@ fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut i = 0;
+    let scale_factor = 1.5;
+
     'running: loop {
         // Handle events
         for event in event_pump.poll_iter() {
@@ -224,7 +230,14 @@ fn main() -> Result<(), String> {
         update_shrimp(&mut shrimp, &sprites);
 
         // Render
-        render(&mut canvas, Color::RGB(i, 64, 255 - i), &texture, &shrimp, &computer_texture)?;
+        render(
+            &mut canvas, 
+            Color::RGB(i, 64, 255 - i), 
+            &texture, 
+            &shrimp, 
+            &computer_texture,
+            scale_factor
+        )?;
 
         // Time management!
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
