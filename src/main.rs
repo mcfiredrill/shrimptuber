@@ -4,6 +4,8 @@ use std::borrow::Borrow;
 use serde_json;
 use serde::{Deserialize, Serialize};
 
+use sdl2::audio::{AudioCallback, AudioSpecDesired};
+use std::i16;
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -12,6 +14,37 @@ use sdl2::rect::{Point, Rect};
 // "self" imports the "image" module itself as well as everything else we listed
 use sdl2::image::{self, LoadTexture, InitFlag};
 use std::time::Duration;
+
+const FRAME_SIZE: usize = 1024;
+
+struct MicCapture {
+    audio_buffer: Vec<i16>,
+    pos: usize,
+}
+
+impl AudioCallback for MicCapture {
+    type Channel = i16;
+
+    fn callback(&mut self, input: &mut [i16]) {
+        for &sample in input.iter() {
+            self.audio_buffer[self.pos] = sample;
+            self.pos += 1;
+
+            if self.pos >= self.audio_buffer.len() {
+                let average_level = calculate_average_volume(&self.audio_buffer);
+                println!("Average Input Level: {:.2}%", average_level);
+                self.pos = 0;
+            }
+        }
+    }
+}
+
+/// Returns a percent value
+fn calculate_average_volume(recorded_vec: &[i16]) -> f32 {
+    let sum: i64 = recorded_vec.iter().map(|&x| (x as i64).abs()).sum();
+    (sum as f32) / (recorded_vec.len() as f32) / (i16::MAX as f32) * 100.0
+}
+
 
 /* 
  * shrimp model r
@@ -78,8 +111,7 @@ fn render(
         frame_width,
         frame_height,
         );
-    println!("current_frame rect: {:?}", current_frame);
-
+    //println!("current_frame rect: {:?}", current_frame);
 
     //canvas.copy(texture, None, None)?;
     //canvas.copy(texture, Rect::new(0, 0, 286, 602), Rect::new(0, 0, 286, 602))?;
@@ -105,19 +137,19 @@ fn update_shrimp(shrimp: &mut Shrimp, sprites: &Vec<Sprite>) {
     } else if shrimp.current_frame == 0 {
         shrimp.forward = true;
     }
-    println!("current_frame: {}", shrimp.current_frame);
+    //println!("current_frame: {}", shrimp.current_frame);
     let current_sprite = sprites.get(shrimp.current_frame as usize).expect("index out of bounds");
-    println!("current_sprite: {:?}", current_sprite);
+    //println!("current_sprite: {:?}", current_sprite);
     shrimp.sprite.x = current_sprite.region.x;
     shrimp.sprite.y = current_sprite.region.y;
     shrimp.sprite.w = current_sprite.region.w;
     shrimp.sprite.h = current_sprite.region.h;
-    let y: f64 = 1.0;
-    if shrimp.forward {
-        shrimp.position.y = shrimp.position.y + (y.sin() * shrimp.current_frame as f64) as i32;
-    } else {
-        shrimp.position.y = shrimp.position.y - (y.sin() * shrimp.current_frame as f64) as i32;
-    }
+    // let y: f64 = 1.0;
+    // if shrimp.forward {
+    //     shrimp.position.y = shrimp.position.y + (y.sin() * shrimp.current_frame as f64) as i32;
+    // } else {
+    //     shrimp.position.y = shrimp.position.y - (y.sin() * shrimp.current_frame as f64) as i32;
+    // }
 }
 
 fn main() -> Result<(), String> {
@@ -127,6 +159,28 @@ fn main() -> Result<(), String> {
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
+    let audio_subsystem = sdl_context.audio()?;
+
+    let desired_spec = AudioSpecDesired {
+        freq: None,
+        channels: Some(1),
+        samples: Some(FRAME_SIZE as u16),
+    };
+
+    let mut mic_capture = MicCapture {
+        audio_buffer: vec![0; FRAME_SIZE],
+        pos: 0,
+    };
+
+    let capture_device = audio_subsystem.open_capture(None, &desired_spec, move |spec| {
+        println!("Capture Spec = {:?}", spec);
+        mic_capture.audio_buffer.resize(spec.samples as usize, 0);
+        mic_capture.pos = 0;
+        mic_capture
+    })?;
+
+    capture_device.resume();
+
     // Leading "_" tells Rust that this is an unused variable that we don't care about. It has to
     // stay unused because if we don't have any variable at all then Rust will treat it as a
     // temporary value and drop it right away!
