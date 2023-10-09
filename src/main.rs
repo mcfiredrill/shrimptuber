@@ -103,7 +103,7 @@ fn render(
     computer_texture: &Texture,
     scale_factor: f32,
 ) -> Result<(), String> {
-    canvas.set_draw_color(color);
+    //canvas.set_draw_color(color);
     canvas.clear();
 
     let (width, height) = canvas.output_size()?;
@@ -196,10 +196,13 @@ fn main() -> Result<(), String> {
     // temporary value and drop it right away!
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 
-    let window = video_subsystem.window("game tutorial", 1920, 1080)
+    let mut window = video_subsystem.window("shrimpius", 1920, 1080)
         .position_centered()
         .build()
         .expect("could not initialize video subsystem");
+
+    let result = window.set_opacity(0.0);
+    println!("{:?}", result);
 
     let mut canvas = window.into_canvas().build()
         .expect("could not make a canvas");
@@ -241,12 +244,12 @@ fn main() -> Result<(), String> {
         //println!("average_level_clone: {:?}", average_level_clone);
         //
         let average_level: f32 = MicCapture::calculate_average_volume(&capture_device.lock().audio_buffer);
-        println!("Average Input Level: {:.2}", average_level);
+        //println!("Average Input Level: {:.2}", average_level);
 
         // Render
         render(
             &mut canvas, 
-            Color::RGB(i, 64, 255 - i), 
+            Color::RGBA(255, 255, 255, 0), 
             &texture, 
             &shrimp, 
             &computer_texture,
