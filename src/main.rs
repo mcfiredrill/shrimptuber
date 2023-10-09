@@ -20,6 +20,7 @@ const FRAME_SIZE: usize = 1024;
 struct MicCapture {
     audio_buffer: Vec<i16>,
     pos: usize,
+    //average_level: f32
 }
 
 impl AudioCallback for MicCapture {
@@ -31,8 +32,8 @@ impl AudioCallback for MicCapture {
             self.pos += 1;
 
             if self.pos >= self.audio_buffer.len() {
-                let average_level = calculate_average_volume(&self.audio_buffer);
-                println!("Average Input Level: {:.2}%", average_level);
+                // self.average_level = calculate_average_volume(&self.audio_buffer);
+                // println!("Average Input Level: {:.2}%", self.average_level);
                 self.pos = 0;
             }
         }
@@ -40,9 +41,11 @@ impl AudioCallback for MicCapture {
 }
 
 /// Returns a percent value
-fn calculate_average_volume(recorded_vec: &[i16]) -> f32 {
-    let sum: i64 = recorded_vec.iter().map(|&x| (x as i64).abs()).sum();
-    (sum as f32) / (recorded_vec.len() as f32) / (i16::MAX as f32) * 100.0
+impl MicCapture {
+    fn calculate_average_volume(recorded_vec: &[i16]) -> f32 {
+        let sum: i64 = recorded_vec.iter().map(|&x| (x as i64).abs()).sum();
+        (sum as f32) / (recorded_vec.len() as f32) / (i16::MAX as f32) * 100.0
+    }
 }
 
 
@@ -174,9 +177,12 @@ fn main() -> Result<(), String> {
     let mut mic_capture = MicCapture {
         audio_buffer: vec![0; FRAME_SIZE],
         pos: 0,
+        //average_level: 1.0
     };
 
-    let capture_device = audio_subsystem.open_capture(None, &desired_spec, move |spec| {
+    //let mut average_level_clone = mic_capture.borrow().average_level.clone();
+
+    let mut capture_device = audio_subsystem.open_capture(None, &desired_spec, |spec| {
         println!("Capture Spec = {:?}", spec);
         mic_capture.audio_buffer.resize(spec.samples as usize, 0);
         mic_capture.pos = 0;
@@ -211,7 +217,8 @@ fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut i = 0;
-    let scale_factor = 1.5;
+
+    let mut scale_factor = 0.7;
 
     'running: loop {
         // Handle events
@@ -229,6 +236,13 @@ fn main() -> Result<(), String> {
         i = (i + 1) % 255;
         update_shrimp(&mut shrimp, &sprites);
 
+        //let average_level_clone = mic_capture.average_level.clone();
+        //scale_factor = mic_capture.average_level.clone();
+        //println!("average_level_clone: {:?}", average_level_clone);
+        //
+        let average_level: f32 = MicCapture::calculate_average_volume(&capture_device.lock().audio_buffer);
+        println!("Average Input Level: {:.2}", average_level);
+
         // Render
         render(
             &mut canvas, 
@@ -236,7 +250,8 @@ fn main() -> Result<(), String> {
             &texture, 
             &shrimp, 
             &computer_texture,
-            scale_factor
+            average_level,
+            //average_level_clone
         )?;
 
         // Time management!
