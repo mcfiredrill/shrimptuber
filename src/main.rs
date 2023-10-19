@@ -1,11 +1,14 @@
 use std::fs;
 use std::borrow::Borrow;
+use std::i16;
+use std::time::Duration;
+
+use std::ffi::c_void;
 
 use serde_json;
 use serde::{Deserialize, Serialize};
 
 use sdl2::audio::{AudioCallback, AudioSpecDesired};
-use std::i16;
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -13,7 +16,39 @@ use sdl2::render::{WindowCanvas, Texture};
 use sdl2::rect::{Point, Rect};
 // "self" imports the "image" module itself as well as everything else we listed
 use sdl2::image::{self, LoadTexture, InitFlag};
-use std::time::Duration;
+
+extern crate x11_dl;
+extern crate gl;
+use sdl2_sys;
+
+const GL_TRUE: i32 = 1;
+const GL_FALSE: i32 = 0;
+
+const GL_COLOR_BUFFER_BIT: GLenum = 0x00004000;
+
+type GLenum = u32;
+type GLboolean = u8;
+type GLbitfield =   u32;
+type GLbyte =       i8;
+type GLshort =      i16;
+type GLint =        i32;
+type GLsizei =      i32;
+type GLubyte =      u8;
+type GLushort =     u16;
+type GLuint =       u8;
+type GLfloat =      f32;
+type GLclampf =     f32;
+type GLdouble =     f64;
+type GLclampd =     f64;
+type GLvoid =       ();
+
+#[link(kind = "dylib", name = "GL")]
+extern {
+    fn glEnable(cap: GLenum) -> ();
+    fn glViewport(x: GLint, y: GLint, width: GLsizei, height: GLsizei) -> ();
+    fn glClearColor(red: GLfloat, green: GLfloat, blue: GLfloat, alpha: GLfloat) -> ();
+    fn glClear(mask: GLbitfield) -> ();
+}
 
 const FRAME_SIZE: usize = 1024;
 
@@ -49,7 +84,7 @@ impl MicCapture {
 }
 
 
-/* 
+/*
  * shrimp model r
  *
  * computer
@@ -96,8 +131,8 @@ fn parse_sprites_from_json(path: &str) -> Result<Vec<Sprite>, serde_json::Error>
 }
 
 fn render(
-    canvas: &mut WindowCanvas, 
-    color: Color, 
+    canvas: &mut WindowCanvas,
+    color: Color,
     texture: &Texture,
     shrimp: &Shrimp,
     computer_texture: &Texture,
@@ -159,6 +194,77 @@ fn update_shrimp(shrimp: &mut Shrimp, sprites: &Vec<Sprite>) {
     // }
 }
 
+fn create_x_window() -> u64 {
+    let xlib = match x11_dl::xlib::Xlib::open() {
+        Ok(x) => x,
+        Err(xerr) => panic!("Error: {}", xerr.detail()),
+    };
+
+    let display_int = 0_i8;
+    let dpy = unsafe { (xlib.XOpenDisplay)(&display_int) };
+
+    let display = {
+        if dpy.is_null() {
+            panic!("Error opening connection to X Server!");
+        } else {
+            unsafe { &mut*dpy }
+        }
+    };
+
+    // get root window
+    let root = unsafe { (xlib.XDefaultRootWindow)(display) };
+
+    let glx_ext = match x11_dl::glx::Glx::open() {
+        Ok(ext) => ext,
+        Err(xerr) => panic!("Error: {}", xerr.detail()),
+    };
+
+    let mut visual_info: x11_dl::xlib::XVisualInfo = unsafe { std::mem::MaybeUninit::zeroed().assume_init() } ;
+    unsafe {
+        if (xlib.XMatchVisualInfo)(
+            display,
+            (xlib.XDefaultScreen)(display),
+            32,
+            x11_dl::xlib::TrueColor,
+            &mut visual_info) == 0 {
+            eprintln!("Failed to match visual info");
+            std::process::exit(1);
+        }
+    }
+
+    let cmap = unsafe { (xlib.XCreateColormap)(display, root, visual_info.visual, x11_dl::xlib::AllocNone) };
+
+    let mut window_attributes: x11_dl::xlib::XSetWindowAttributes = unsafe { std::mem::MaybeUninit::zeroed().assume_init() };
+    window_attributes.background_pixmap = 0;
+    window_attributes.border_pixmap = 0;
+    window_attributes.event_mask = x11_dl::xlib::ExposureMask | x11_dl::xlib::KeyPressMask;
+    window_attributes.colormap = cmap;
+
+    // construct window
+    let window = unsafe { (xlib.XCreateWindow)(
+            display,
+            root,
+            50, 300, 400, 100, 0,
+            visual_info.depth,
+
+            1 /* InputOutput */,
+            visual_info.visual,
+
+            x11_dl::xlib::CWColormap | x11_dl::xlib::CWEventMask | x11_dl::xlib::CWBackPixmap | x11_dl::xlib::CWBorderPixel,
+            &mut window_attributes) };
+
+    unsafe { (xlib.XMapWindow)(display, window) };
+    //unsafe { (xlib.XStoreName)(display, window, window_title.as_ptr()) };
+
+    let visual_info_ptr = &mut visual_info as *mut x11_dl::xlib::XVisualInfo;
+
+    let glc = unsafe { (glx_ext.glXCreateContext)(display, visual_info_ptr, ::std::ptr::null_mut(), GL_TRUE) };
+
+    unsafe { (glx_ext.glXMakeCurrent)(display, window, glc) };
+
+    return window;
+}
+
 fn main() -> Result<(), String> {
     let path = "assets/shrimpy.tpsheet";
 
@@ -196,13 +302,22 @@ fn main() -> Result<(), String> {
     // temporary value and drop it right away!
     let _image_context = image::init(InitFlag::PNG | InitFlag::JPG)?;
 
-    let mut window = video_subsystem.window("shrimpius", 1920, 1080)
-        .position_centered()
-        .build()
-        .expect("could not initialize video subsystem");
+    let x_window = create_x_window();
 
-    let result = window.set_opacity(0.0);
-    println!("{:?}", result);
+    let w: *mut sdl2_sys::SDL_Window = unsafe { sdl2_sys::SDL_CreateWindowFrom(x_window as *mut c_void) };
+
+    let window: sdl2::video::Window = {
+        unsafe { sdl2::video::Window::from_ll(video_subsystem, w) }
+    };
+
+    // let mut window = video_subsystem.window("shrimpius", 1920, 1080)
+    //     //window
+    //     .position_centered()
+    //     .build()
+    //     .expect("could not initialize video subsystem");
+
+    // let result = window.set_opacity(0.0);
+    // println!("{:?}", result);
 
     let mut canvas = window.into_canvas().build()
         .expect("could not make a canvas");
@@ -248,10 +363,10 @@ fn main() -> Result<(), String> {
 
         // Render
         render(
-            &mut canvas, 
-            Color::RGBA(255, 255, 255, 0), 
-            &texture, 
-            &shrimp, 
+            &mut canvas,
+            Color::RGBA(255, 255, 255, 0),
+            &texture,
+            &shrimp,
             &computer_texture,
             average_level,
             //average_level_clone
